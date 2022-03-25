@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:schermatachat/widgets/personWidget.dart';
+import 'package:retireinvanvitelli/widgets/personWidget.dart';
 
 void main() {
   runApp(const MyApp());
