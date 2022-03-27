@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:retireinvanvitelli/pages/chat_page.dart';
+import 'package:retireinvanvitelli/pages/chats_page.dart';
 import 'package:retireinvanvitelli/pages/profile_page.dart';
 import 'package:retireinvanvitelli/pages/settings_page.dart';
 
@@ -42,7 +42,7 @@ class _RetireInVanvitelliState extends State<RetireInVanvitelli> {
           index: _currentIndex,
           children: const <Widget>[
             ProfilePage(),
-            ChatPage(),
+            ChatsPage(),
             SettingsPage(),
           ],
         ),
