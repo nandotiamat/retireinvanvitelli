@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:retireinvanvitelli/pages/chats_page.dart';
 import 'package:retireinvanvitelli/pages/profile_page.dart';
 import 'package:retireinvanvitelli/pages/settings_page.dart';
+import 'package:retireinvanvitelli/types/chat_data.dart';
 
 void main() {
   runApp(const RetireInVanvitelli());
@@ -16,6 +17,16 @@ class RetireInVanvitelli extends StatefulWidget {
 
 class _RetireInVanvitelliState extends State<RetireInVanvitelli> {
   int _currentIndex = 1;
+  List<ChatData> chatData = [
+    ChatData(
+      lastMessageTime: "13:23",
+      numberOfUnreadMessages: 134,
+      avatarUrl:
+          "https://therminic2018.eu/wp-content/uploads/2018/07/dummy-avatar-300x300.jpg",
+      chatTitle: "Dummy",
+      lastMessage: "Lorem Ipsum",
+    )
+  ];
 
   void _onItemTapped(int index) {
     setState(() {
@@ -40,10 +51,12 @@ class _RetireInVanvitelliState extends State<RetireInVanvitelli> {
         ),
         body: IndexedStack(
           index: _currentIndex,
-          children: const <Widget>[
-            ProfilePage(),
-            ChatsPage(),
-            SettingsPage(),
+          children: <Widget>[
+            const ProfilePage(),
+            ChatsPage(
+              chatData: chatData,
+            ),
+            const SettingsPage(),
           ],
         ),
         bottomNavigationBar: BottomNavigationBar(
