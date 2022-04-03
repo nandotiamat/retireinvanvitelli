@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:retireinvanvitelli/pages/home_page.dart';
 import 'package:retireinvanvitelli/pages/password_recoverypage.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
-import 'package:retireinvanvitelli/pages/register_page.dart';
 
 import '../components/auth_text_field.dart';
 
@@ -36,10 +35,10 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   void _handleRegistration() {
-    Navigator.push(
-       context,
-       MaterialPageRoute(builder: (context) => const RegisterPage()),
-     );
+    // Navigator.push(
+    //   context,
+    //   MaterialPageRoute(builder: (context) => const SignupPage()),
+    // );
   }
 
   @override
@@ -131,6 +130,7 @@ class _LoginPageState extends State<LoginPage> {
                           style: TextStyle(
                               color: Theme.of(context).primaryColor,
                               fontWeight: FontWeight.w600),
+                          // TODO: SIGNUP SCREEN
                           recognizer: TapGestureRecognizer()
                             ..onTap = _handleRegistration),
                     ]),
