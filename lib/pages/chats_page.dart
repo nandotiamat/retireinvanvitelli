@@ -16,7 +16,8 @@ class ChatsPage extends StatefulWidget {
 class _ChatsPageState extends State<ChatsPage> {
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
+    return Scaffold(
+      body: ListView.builder(
       physics: const ClampingScrollPhysics(),
       shrinkWrap: true,
       itemCount: widget.chatData.length,
@@ -48,6 +49,7 @@ class _ChatsPageState extends State<ChatsPage> {
           ),
         ]),
       ),
-    );
+    ),
+    ); 
   }
 }
