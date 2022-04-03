@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "593083416525",
+    "project_id": "retire-in-vanvitelli-dev",
+    "storage_bucket": "retire-in-vanvitelli-dev.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:593083416525:android:fcab803e235fbdbb244e84",
+        "android_client_info": {
+          "package_name": "com.example.retireinvanvitelli"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "593083416525-hg0h0nonsh2b1q42el07djq53g9ichfe.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAPkkxHUslAUdULmSWqLwca2UnbE0d7SF8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "593083416525-hg0h0nonsh2b1q42el07djq53g9ichfe.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

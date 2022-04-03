@@ -39,7 +39,8 @@ dependencies:
   open_file: ^3.2.1
   bubble: ^1.2.1
   animated_text_kit: ^4.2.1
-  
+  firebase_auth: ^3.3.12
+  firebase_core: ^1.14.0
 dev_dependencies:
   flutter_test:
     sdk: flutter

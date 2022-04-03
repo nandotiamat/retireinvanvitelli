@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:retireinvanvitelli/pages/home_page.dart';
 import 'package:retireinvanvitelli/pages/password_recoverypage.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
-
 import '../components/auth_text_field.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({
@@ -16,8 +16,9 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  TextEditingController nameController = TextEditingController();
-  TextEditingController passwordController = TextEditingController();
+  final _auth = FirebaseAuth.instance;
+  String email = "";
+  String password = "";
 
   void _handleLogin() {
     Navigator.pushAndRemoveUntil(
@@ -82,15 +83,19 @@ class _LoginPageState extends State<LoginPage> {
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 8.0),
                 child: AuthTextField(
-                  nameController: nameController,
+                  onChanged: (value) {
+                    email = value;
+                  },
                   prefixIcon: const Icon(Icons.person),
-                  labelText: "Username",
+                  labelText: "Email",
                 ),
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 8.0),
                 child: AuthTextField(
-                  nameController: passwordController,
+                  onChanged: (value) {
+                    password = value;
+                  },
                   prefixIcon: const Icon(Icons.lock),
                   labelText: "Password",
                   isPassword: true,
