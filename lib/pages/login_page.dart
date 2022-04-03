@@ -1,7 +1,11 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:retireinvanvitelli/pages/home_page.dart';
 import 'package:retireinvanvitelli/pages/password_recoverypage.dart';
+import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:retireinvanvitelli/pages/register_page.dart';
+
+import '../components/auth_text_field.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({
@@ -16,90 +20,123 @@ class _LoginPageState extends State<LoginPage> {
   TextEditingController nameController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
 
+  void _handleLogin() {
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (context) => const HomePage()),
+      (route) => false,
+    );
+  }
+
+  void _handleForgetPassword() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const PasswordRecoveryPage()),
+    );
+  }
+
+  void _handleRegistration() {
+    Navigator.push(
+       context,
+       MaterialPageRoute(builder: (context) => const RegisterPage()),
+     );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: false,
-      body: SingleChildScrollView(
-        physics: const ClampingScrollPhysics(),
-        child: ListView(
-          shrinkWrap: true,
-          children: <Widget>[
-            Container(
-                  alignment: Alignment.center,
-                  padding: const EdgeInsets.all(10),
-                  child: const Text(
-                    'Retire in V:',
-                    style: TextStyle(fontWeight: FontWeight.w500, fontSize: 30),
-                  )),
-            Container(
-              padding: const EdgeInsets.all(10),
-              child: TextField(
-                controller: nameController,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  prefixIcon: Icon(Icons.person),
-                  labelText: 'Username',
-                ),
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(10.0),
+          child: ListView(
+            shrinkWrap: true,
+            children: [
+              const Text(
+                'Retire in V:',
+                textAlign: TextAlign.center,
+                style: TextStyle(fontWeight: FontWeight.w500, fontSize: 30),
               ),
-            ),
-            Container(
-              padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
-              child: TextField(
-                obscureText: true,
-                controller: passwordController,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  prefixIcon: Icon(Icons.lock),
-                  labelText: 'Password',
-                ),
-              ),
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const PasswordRecoveryPage()),
-                );
-              },
-              child: const Text(
-                'Password Dimenticata?',
-              ),
-            ),
-            Container(
+              SizedBox(
                 height: 50,
-                padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
-                child: ElevatedButton(
-                  child: const Text('Login'),
-                  onPressed: () {
-                    Navigator.pushAndRemoveUntil(
-                    context,
-                    MaterialPageRoute(builder: (context) => const HomePage()),
-                    (route) => false,
-                  );
-                  },
-                )),
-            Row(
-              children: <Widget>[
-                const Text('Non sei ancora registrato?'),
-                TextButton(
-                  child: const Text(
-                    'Registrati',
-                    style: TextStyle(fontSize: 20),
+                child: Center(
+                  child: DefaultTextStyle(
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                        fontSize: 16.0,
+                        fontStyle: FontStyle.italic,
+                        color: Colors.black),
+                    child: AnimatedTextKit(
+                      repeatForever: true,
+                      pause: const Duration(seconds: 3),
+                      animatedTexts: [
+                        TypewriterAnimatedText('Chatta con i tuoi amici'),
+                        TypewriterAnimatedText(
+                            'Chiedi tutto ciò di cui hai bisogno nei gruppi'),
+                        TypewriterAnimatedText(
+                            'Ritirati nella vanvitelli...............'),
+                      ],
+                      onTap: () {},
+                    ),
                   ),
-                  onPressed: () {
-                    Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const RegisterPage()),
-                    );
-                  },
-                )
-              ],
-              mainAxisAlignment: MainAxisAlignment.center,
-            ),
-          ],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: AuthTextField(
+                  nameController: nameController,
+                  prefixIcon: const Icon(Icons.person),
+                  labelText: "Username",
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: AuthTextField(
+                  nameController: passwordController,
+                  prefixIcon: const Icon(Icons.lock),
+                  labelText: "Password",
+                  isPassword: true,
+                ),
+              ),
+              const SizedBox(
+                height: 8,
+              ),
+              ElevatedButton(
+                style: ButtonStyle(
+                    padding:
+                        MaterialStateProperty.all(const EdgeInsets.all(16.0)),
+                    shape: MaterialStateProperty.all(RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16)))),
+                child: const Text('Login'),
+                onPressed: _handleLogin,
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 16.0),
+                child: RichText(
+                  text: TextSpan(
+                      text: "Password dimenticata?",
+                      style: TextStyle(
+                          color: Theme.of(context).primaryColor,
+                          fontWeight: FontWeight.w600),
+                      recognizer: TapGestureRecognizer()
+                        ..onTap = _handleForgetPassword),
+                ),
+              ),
+              RichText(
+                text: TextSpan(
+                    style: Theme.of(context).primaryTextTheme.bodyText2,
+                    text: 'Non sei ancora registrato? ',
+                    children: [
+                      TextSpan(
+                          text: "Registrati",
+                          style: TextStyle(
+                              color: Theme.of(context).primaryColor,
+                              fontWeight: FontWeight.w600),
+                          recognizer: TapGestureRecognizer()
+                            ..onTap = _handleRegistration),
+                    ]),
+              ),
+            ],
+          ),
         ),
       ),
     );
