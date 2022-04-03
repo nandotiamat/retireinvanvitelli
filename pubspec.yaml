@@ -38,7 +38,8 @@ dependencies:
   file_picker: ^4.5.1
   open_file: ^3.2.1
   bubble: ^1.2.1
-
+  animated_text_kit: ^4.2.1
+  
 dev_dependencies:
   flutter_test:
     sdk: flutter
