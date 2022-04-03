@@ -29,9 +29,12 @@ class _ChatsPageState extends State<ChatsPage> {
                 chatData: widget.chatData[index],
               ),
             )),
-        leading: CircleAvatar(
-          radius: 30,
-          backgroundImage: NetworkImage(widget.chatData[index].avatarUrl),
+        leading: Hero(
+          tag: 'profilepic',
+          child: CircleAvatar(
+            radius: 30,
+            backgroundImage: NetworkImage(widget.chatData[index].avatarUrl),
+          ),
         ),
         title: Text(widget.chatData[index].chatTitle),
         subtitle: Text(widget.chatData[index].lastMessage),
