@@ -13,7 +13,6 @@ class RetireInVanvitelli extends StatefulWidget {
 }
 
 class _RetireInVanvitelliState extends State<RetireInVanvitelli> {
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -22,14 +21,7 @@ class _RetireInVanvitelliState extends State<RetireInVanvitelli> {
       theme: ThemeData(
         primarySwatch: Colors.cyan,
       ),
-      home: Scaffold(
-        resizeToAvoidBottomInset: false,
-        body: Column(
-          children : const <Widget>[
-            LoginPage(),
-          ],
-        ),
-      ),
+      home: const LoginPage(),
     );
   }
 }
