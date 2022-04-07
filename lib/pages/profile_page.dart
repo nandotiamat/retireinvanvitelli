@@ -48,16 +48,6 @@ class _ProfilePageState extends State<ProfilePage> {
                   ..text = "Via Dummy 3, Dummyland",
                 decoration: const InputDecoration(label: Text("Address")),
               ),
-              TextField(
-                controller: TextEditingController()
-                  ..text = "Via Dummy 3, Dummyland",
-                decoration: const InputDecoration(label: Text("Address")),
-              ),
-              TextField(
-                controller: TextEditingController()
-                  ..text = "Via Dummy 3, Dummyland",
-                decoration: const InputDecoration(label: Text("Address")),
-              ),
             ],
           ),
         ),
