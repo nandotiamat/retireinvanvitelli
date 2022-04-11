@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:retireinvanvitelli/pages/login_page.dart';
+import 'package:retireinvanvitelli/pages/get_started_page.dart';
 
 void main() {
   runApp(const RetireInVanvitelli());
@@ -21,7 +21,7 @@ class _RetireInVanvitelliState extends State<RetireInVanvitelli> {
       theme: ThemeData(
         primarySwatch: Colors.cyan,
       ),
-      home: const LoginPage(),
+      home: const GetStartedPage(),
     );
   }
 }
