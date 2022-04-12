@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 
 import 'login_page.dart';
 
-class RegisterPage extends StatefulWidget {
-  const RegisterPage({Key? key}) : super(key: key);
+class SignUpPage extends StatefulWidget {
+  const SignUpPage({Key? key}) : super(key: key);
 
   @override
-  State<RegisterPage> createState() => _RegisterPageState();
+  State<SignUpPage> createState() => _SignUpPageState();
 }
 
-class _RegisterPageState extends State<RegisterPage> {
+class _SignUpPageState extends State<SignUpPage> {
   TextEditingController mailController = TextEditingController();
   TextEditingController usernameController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
@@ -87,36 +87,38 @@ class _RegisterPageState extends State<RegisterPage> {
                       context: context,
                       builder: (context) {
                         return Dialog(
-                           child: ListView(
-                              shrinkWrap: true,
-                              children: <Widget>[
-                                const Padding(
-                                  padding: EdgeInsets.all(13.0),
-                                  child: Text(
-                                    'Controlla la tua mail per completare la registrazione',
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.w500,
-                                        fontSize: 17),
-                                  ),
+                          child: ListView(
+                            shrinkWrap: true,
+                            children: <Widget>[
+                              const Padding(
+                                padding: EdgeInsets.all(13.0),
+                                child: Text(
+                                  'Controlla la tua mail per completare la registrazione',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 17),
                                 ),
-                          Container(
-                            height: 50,
-                            padding: const EdgeInsets.all(10),
-                            child: ElevatedButton(
-                            child: const Text('Torna alla schermata di Login'),
-                            onPressed: () {
-                            Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => const LoginPage()),
-                                        );
-                                      },
-                                    )),
-                              ],
-                            ),
+                              ),
+                              Container(
+                                  height: 50,
+                                  padding: const EdgeInsets.all(10),
+                                  child: ElevatedButton(
+                                    child: const Text(
+                                        'Torna alla schermata di Login'),
+                                    onPressed: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                const LoginPage()),
+                                      );
+                                    },
+                                  )),
+                            ],
+                          ),
                         );
-                      }
-                      );
+                      });
                 },
               ),
             )

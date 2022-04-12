@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:retireinvanvitelli/pages/home_page.dart';
 import 'package:retireinvanvitelli/pages/password_recoverypage.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
-import '../components/auth_text_field.dart';
+import 'package:retireinvanvitelli/pages/signup_page.dart';
 // import 'package:firebase_auth/firebase_auth.dart';
 
 class LoginPage extends StatefulWidget {
@@ -17,15 +17,19 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   // final _auth = FirebaseAuth.instance;
-  String email = "";
-  String password = "";
+  String _email = "";
+  String _password = "";
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   void _handleLogin() {
-    Navigator.pushAndRemoveUntil(
-      context,
-      MaterialPageRoute(builder: (context) => const HomePage()),
-      (route) => false,
-    );
+    if (_formKey.currentState!.validate()) {
+      // TODO: FIREBASE LOGIN
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (context) => const HomePage()),
+        (route) => false,
+      );
+    }
   }
 
   void _handleForgetPassword() {
@@ -36,20 +40,20 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   void _handleRegistration() {
-    // Navigator.push(
-    //   context,
-    //   MaterialPageRoute(builder: (context) => const SignupPage()),
-    // );
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const SignUpPage()),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: Padding(
+      body: Container(
+        alignment: Alignment.center,
+        child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 10.0),
-          child: ListView(
-            shrinkWrap: true,
+          child: Column(
             children: [
               Hero(
                 tag: "logo",
@@ -88,65 +92,110 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8.0),
-                child: AuthTextField(
-                  onChanged: (value) {
-                    email = value;
-                  },
-                  prefixIcon: const Icon(Icons.person),
-                  labelText: "Email",
+              Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8.0),
+                      child: TextFormField(
+                        onChanged: (value) {
+                          _email = value;
+                        },
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Inserisci la tua email.';
+                          }
+                          return null;
+                        },
+                        keyboardType: TextInputType.emailAddress,
+                        decoration: const InputDecoration(
+                          prefixIcon: Icon(Icons.person),
+                          labelText: "Email",
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(16),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8.0),
+                      child: TextFormField(
+                        onChanged: (value) {
+                          _password = value;
+                        },
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Inserisci la tua password.';
+                          }
+                          return null;
+                        },
+                        obscureText: true,
+                        decoration: const InputDecoration(
+                          prefixIcon: Icon(Icons.lock),
+                          labelText: "Password",
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(16),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 8,
+                    ),
+                    ElevatedButton(
+                      style: ButtonStyle(
+                          padding: MaterialStateProperty.all(
+                              const EdgeInsets.all(16.0)),
+                          shape: MaterialStateProperty.all(
+                              RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(16)))),
+                      child: const Text('Login'),
+                      onPressed: _handleLogin,
+                    ),
+                  ],
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8.0),
-                child: AuthTextField(
-                  onChanged: (value) {
-                    password = value;
-                  },
-                  prefixIcon: const Icon(Icons.lock),
-                  labelText: "Password",
-                  isPassword: true,
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 16.0),
+                  child: RichText(
+                    text: TextSpan(
+                        text: "Password dimenticata?",
+                        style: TextStyle(
+                            color: Theme.of(context).primaryColor,
+                            fontWeight: FontWeight.w600),
+                        recognizer: TapGestureRecognizer()
+                          ..onTap = _handleForgetPassword),
+                  ),
                 ),
               ),
-              const SizedBox(
-                height: 8,
-              ),
-              ElevatedButton(
-                style: ButtonStyle(
-                    padding:
-                        MaterialStateProperty.all(const EdgeInsets.all(16.0)),
-                    shape: MaterialStateProperty.all(RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16)))),
-                child: const Text('Login'),
-                onPressed: _handleLogin,
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 16.0),
-                child: RichText(
-                  text: TextSpan(
-                      text: "Password dimenticata?",
-                      style: TextStyle(
-                          color: Theme.of(context).primaryColor,
-                          fontWeight: FontWeight.w600),
-                      recognizer: TapGestureRecognizer()
-                        ..onTap = _handleForgetPassword),
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Padding(
+                  padding: const EdgeInsets.only(bottom: 8.0),
+                  child: RichText(
+                    text: TextSpan(
+                        style: Theme.of(context).primaryTextTheme.bodyText2,
+                        text: 'Non sei ancora registrato? ',
+                        children: [
+                          TextSpan(
+                              text: "Registrati",
+                              style: TextStyle(
+                                  color: Theme.of(context).primaryColor,
+                                  fontWeight: FontWeight.w600),
+                              // TODO: SIGNUP SCREEN
+                              recognizer: TapGestureRecognizer()
+                                ..onTap = _handleRegistration),
+                        ]),
+                  ),
                 ),
-              ),
-              RichText(
-                text: TextSpan(
-                    style: Theme.of(context).primaryTextTheme.bodyText2,
-                    text: 'Non sei ancora registrato? ',
-                    children: [
-                      TextSpan(
-                          text: "Registrati",
-                          style: TextStyle(
-                              color: Theme.of(context).primaryColor,
-                              fontWeight: FontWeight.w600),
-                          // TODO: SIGNUP SCREEN
-                          recognizer: TapGestureRecognizer()
-                            ..onTap = _handleRegistration),
-                    ]),
               ),
             ],
           ),
