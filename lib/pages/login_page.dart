@@ -21,9 +21,15 @@ class _LoginPageState extends State<LoginPage> {
   String _password = "";
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
+  void _firebaseLogin(String email, String password) {}
+
   void _handleLogin() {
     if (_formKey.currentState!.validate()) {
+      _formKey.currentState!.save();
+
       // TODO: FIREBASE LOGIN
+      _firebaseLogin(_email, _password);
+
       Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(builder: (context) => const HomePage()),
@@ -74,9 +80,10 @@ class _LoginPageState extends State<LoginPage> {
                   child: DefaultTextStyle(
                     textAlign: TextAlign.center,
                     style: const TextStyle(
-                        fontSize: 16.0,
-                        fontStyle: FontStyle.italic,
-                        color: Colors.black),
+                      fontSize: 16.0,
+                      fontStyle: FontStyle.italic,
+                      color: Colors.black,
+                    ),
                     child: AnimatedTextKit(
                       repeatForever: true,
                       pause: const Duration(seconds: 3),
@@ -100,8 +107,8 @@ class _LoginPageState extends State<LoginPage> {
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 8.0),
                       child: TextFormField(
-                        onChanged: (value) {
-                          _email = value;
+                        onSaved: (value) {
+                          _email = value!;
                         },
                         validator: (value) {
                           if (value == null || value.isEmpty) {
@@ -124,8 +131,8 @@ class _LoginPageState extends State<LoginPage> {
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 8.0),
                       child: TextFormField(
-                        onChanged: (value) {
-                          _password = value;
+                        onSaved: (value) {
+                          _password = value!;
                         },
                         validator: (value) {
                           if (value == null || value.isEmpty) {
@@ -150,11 +157,15 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                     ElevatedButton(
                       style: ButtonStyle(
-                          padding: MaterialStateProperty.all(
-                              const EdgeInsets.all(16.0)),
-                          shape: MaterialStateProperty.all(
-                              RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(16)))),
+                        padding: MaterialStateProperty.all(
+                          const EdgeInsets.all(16.0),
+                        ),
+                        shape: MaterialStateProperty.all(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                        ),
+                      ),
                       child: const Text('Login'),
                       onPressed: _handleLogin,
                     ),
@@ -188,9 +199,9 @@ class _LoginPageState extends State<LoginPage> {
                           TextSpan(
                               text: "Registrati",
                               style: TextStyle(
-                                  color: Theme.of(context).primaryColor,
-                                  fontWeight: FontWeight.w600),
-                              // TODO: SIGNUP SCREEN
+                                color: Theme.of(context).primaryColor,
+                                fontWeight: FontWeight.w600,
+                              ),
                               recognizer: TapGestureRecognizer()
                                 ..onTap = _handleRegistration),
                         ]),

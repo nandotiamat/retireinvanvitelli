@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:retireinvanvitelli/pages/login_page.dart';
 
 class PasswordRecoveryPage extends StatefulWidget {
@@ -15,6 +16,9 @@ class _PasswordRecoveryPageState extends State<PasswordRecoveryPage> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
+        systemOverlayStyle: SystemUiOverlayStyle.dark,
+        backgroundColor: Colors.transparent,
+        elevation: 0,
         title: const Text('Recupero Password'),
       ),
       body: Center(
@@ -38,48 +42,47 @@ class _PasswordRecoveryPageState extends State<PasswordRecoveryPage> {
                 ),
               ),
             ),
-            Container(
-                height: 50,
-                padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
-                child: ElevatedButton(
-                  child: const Text('Recupera Password'),
-                  onPressed: () {
-                    showDialog(
-                        barrierDismissible: false,
-                        context: context,
-                        builder: (context) {
-                          return Dialog(
-                            child: ListView(
-                              shrinkWrap: true,
-                              children: <Widget>[
-                                const Padding(
-                                  padding: EdgeInsets.all(13.0),
-                                  child: Text(
-                                    'Controlla la tua mail per recuperare la password',
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.w500,
-                                        fontSize: 17),
-                                  ),
-                                ),
-                          Container(
-                            height: 50,
-                            padding: const EdgeInsets.all(10),
-                            child: ElevatedButton(
-                            child: const Text('Torna alla schermata di Login'),
-                            onPressed: () {
-                            Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => const LoginPage()),
-                                        );
-                                      },
-                                    )),
-                              ],
+            ElevatedButton(
+              child: const Text('Recupera Password'),
+              onPressed: () {
+                showDialog(
+                    barrierDismissible: false,
+                    context: context,
+                    builder: (context) {
+                      return Dialog(
+                        child: ListView(
+                          shrinkWrap: true,
+                          children: <Widget>[
+                            const Padding(
+                              padding: EdgeInsets.all(13.0),
+                              child: Text(
+                                'Controlla la tua mail per recuperare la password',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                    fontWeight: FontWeight.w500, fontSize: 17),
+                              ),
                             ),
-                          );
-                        });
-                  },
-                )),
+                            Container(
+                                height: 50,
+                                padding: const EdgeInsets.all(10),
+                                child: ElevatedButton(
+                                  child: const Text(
+                                      'Torna alla schermata di Login'),
+                                  onPressed: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              const LoginPage()),
+                                    );
+                                  },
+                                )),
+                          ],
+                        ),
+                      );
+                    });
+              },
+            ),
           ],
         ),
       ),

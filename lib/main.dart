@@ -28,6 +28,16 @@ class _RetireInVanvitelliState extends State<RetireInVanvitelli> {
       title: 'Retire in Vanvitelli',
       theme: ThemeData(
         primarySwatch: Colors.cyan,
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ButtonStyle(
+            padding: MaterialStateProperty.all(const EdgeInsets.all(16.0)),
+            shape: MaterialStateProperty.all(
+              RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+            ),
+          ),
+        ),
       ),
       home: const GetStartedPage(),
     );

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import 'package:flutter/services.dart';
 import 'login_page.dart';
 
 class SignUpPage extends StatefulWidget {
@@ -10,119 +10,170 @@ class SignUpPage extends StatefulWidget {
 }
 
 class _SignUpPageState extends State<SignUpPage> {
-  TextEditingController mailController = TextEditingController();
-  TextEditingController usernameController = TextEditingController();
-  TextEditingController passwordController = TextEditingController();
-  TextEditingController nameController = TextEditingController();
-  TextEditingController surnameController = TextEditingController();
+  String _email = "";
+  String _password = "";
+  String _username = "";
+  String? _name;
+  String? _surname;
+
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+  void _handleRegistration(
+    String email,
+    String password,
+    String username,
+    String? name,
+    String? surname,
+  ) {}
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: false,
       appBar: AppBar(
+        systemOverlayStyle: SystemUiOverlayStyle.dark,
+        backgroundColor: Colors.transparent,
+        elevation: 0,
         title: const Text('Registrazione'),
       ),
-      body: SingleChildScrollView(
-        physics: const ClampingScrollPhysics(),
-        child: ListView(
-          shrinkWrap: true,
-          children: <Widget>[
-            Container(
-              padding: const EdgeInsets.all(10),
-              child: TextField(
-                controller: mailController,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: 'E-Mail',
+      body: Container(
+        alignment: Alignment.center,
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 10.0),
+          physics: const ClampingScrollPhysics(),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                const Text("Inserisci i tuoi dati:"),
+                const SizedBox(
+                  height: 20,
                 ),
-              ),
-            ),
-            Container(
-              padding: const EdgeInsets.all(10),
-              child: TextField(
-                controller: nameController,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: 'Nome',
+                TextFormField(
+                  onSaved: (value) {
+                    _email = value!;
+                  },
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return "Inserirsci la tua email";
+                    }
+                    return null;
+                  },
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(16),
+                      ),
+                    ),
+                    labelText: 'E-Mail',
+                  ),
                 ),
-              ),
-            ),
-            Container(
-              padding: const EdgeInsets.all(10),
-              child: TextField(
-                controller: surnameController,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: 'Cognome',
+                const SizedBox(height: 10),
+                TextFormField(
+                  onSaved: (value) {
+                    _username = value!;
+                  },
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return "Inserirsci l'username che vuoi utilizzare";
+                    }
+                    return null;
+                  },
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(16),
+                      ),
+                    ),
+                    labelText: 'Username',
+                  ),
                 ),
-              ),
-            ),
-            Container(
-              padding: const EdgeInsets.all(10),
-              child: TextField(
-                controller: nameController,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: 'Username',
+                const SizedBox(height: 10),
+                TextFormField(
+                  onSaved: (value) {
+                    _password = value!;
+                  },
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return "Inserisci la tua password";
+                    }
+                    return null;
+                  },
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(16),
+                      ),
+                    ),
+                    labelText: 'Password',
+                  ),
                 ),
-              ),
-            ),
-            Container(
-              padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
-              child: TextField(
-                controller: passwordController,
-                decoration: const InputDecoration(
-                    border: OutlineInputBorder(), labelText: 'Password'),
-              ),
-            ),
-            Container(
-              height: 50,
-              padding: const EdgeInsets.all(10),
-              child: ElevatedButton(
-                child: const Text('Registrati'),
-                onPressed: () {
-                  showDialog(
-                      barrierDismissible: false,
-                      context: context,
-                      builder: (context) {
-                        return Dialog(
-                          child: ListView(
-                            shrinkWrap: true,
-                            children: <Widget>[
-                              const Padding(
-                                padding: EdgeInsets.all(13.0),
-                                child: Text(
-                                  'Controlla la tua mail per completare la registrazione',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.w500,
-                                      fontSize: 17),
+                const SizedBox(height: 10),
+                TextFormField(
+                  onSaved: (value) {
+                    _name = value!;
+                  },
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(16),
+                      ),
+                    ),
+                    labelText: 'Nome (facoltativo)',
+                  ),
+                ),
+                const SizedBox(height: 10),
+                TextFormField(
+                  onSaved: (value) {
+                    _surname = value!;
+                  },
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(16),
+                      ),
+                    ),
+                    labelText: 'Cognome (facoltativo)',
+                  ),
+                ),
+                const SizedBox(height: 10),
+                ElevatedButton(
+                  child: const Text('Registrati'),
+                  onPressed: () {
+                    if (_formKey.currentState!.validate()) {
+                      _formKey.currentState!.save();
+                      _handleRegistration(
+                        _email,
+                        _password,
+                        _username,
+                        _name,
+                        _surname,
+                      );
+                      showDialog(
+                          barrierDismissible: false,
+                          context: context,
+                          builder: (context) {
+                            return AlertDialog(
+                              title: const Text(
+                                  "Controlla la tua inbox per verificare la registrazione."),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                  child: const Text("Torna alla Login Page"),
                                 ),
-                              ),
-                              Container(
-                                  height: 50,
-                                  padding: const EdgeInsets.all(10),
-                                  child: ElevatedButton(
-                                    child: const Text(
-                                        'Torna alla schermata di Login'),
-                                    onPressed: () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                const LoginPage()),
-                                      );
-                                    },
-                                  )),
-                            ],
-                          ),
-                        );
-                      });
-                },
-              ),
-            )
-          ],
+                              ],
+                            );
+                          });
+                    }
+                  },
+                ),
+                const SizedBox(height: 10),
+              ],
+            ),
+          ),
         ),
       ),
     );
