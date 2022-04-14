@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:retireinvanvitelli/pages/get_started_page.dart';
+import 'package:retireinvanvitelli/pages/home_page.dart';
+import 'package:retireinvanvitelli/pages/login_page.dart';
+import 'package:retireinvanvitelli/pages/signup_page.dart';
 
 void main() {
   runApp(const RetireInVanvitelli());
@@ -26,6 +29,13 @@ class _RetireInVanvitelliState extends State<RetireInVanvitelli> {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Retire in Vanvitelli',
+      initialRoute: "/getstarted",
+      routes: {
+        '/login': (context) => const LoginPage(),
+        '/signup': (context) => const SignUpPage(),
+        '/getstarted': (context) => const GetStartedPage(),
+        '/': (context) => const HomePage(),
+      },
       theme: ThemeData(
         primarySwatch: Colors.cyan,
         elevatedButtonTheme: ElevatedButtonThemeData(
@@ -39,7 +49,6 @@ class _RetireInVanvitelliState extends State<RetireInVanvitelli> {
           ),
         ),
       ),
-      home: const GetStartedPage(),
     );
   }
 }

@@ -30,12 +30,7 @@ class GetStartedPage extends StatelessWidget {
               ),
               ElevatedButton(
                 onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const LoginPage(),
-                    ),
-                  );
+                  Navigator.pushNamed(context, "/login");
                 },
                 child: const Text(
                   "Get started!",

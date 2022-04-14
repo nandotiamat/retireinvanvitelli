@@ -1,7 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:retireinvanvitelli/pages/home_page.dart';
-import 'package:retireinvanvitelli/pages/password_recoverypage.dart';
+import 'package:retireinvanvitelli/pages/password_recovery_page.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:retireinvanvitelli/pages/signup_page.dart';
 // import 'package:firebase_auth/firebase_auth.dart';
@@ -28,6 +28,7 @@ class _LoginPageState extends State<LoginPage> {
       _formKey.currentState!.save();
 
       // TODO: FIREBASE LOGIN
+
       _firebaseLogin(_email, _password);
 
       Navigator.pushAndRemoveUntil(
@@ -58,7 +59,7 @@ class _LoginPageState extends State<LoginPage> {
       body: Container(
         alignment: Alignment.center,
         child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 10.0),
+          padding: const EdgeInsets.symmetric(horizontal: 8.0),
           child: Column(
             children: [
               Hero(

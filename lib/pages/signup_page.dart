@@ -38,7 +38,7 @@ class _SignUpPageState extends State<SignUpPage> {
       body: Container(
         alignment: Alignment.center,
         child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 10.0),
+          padding: const EdgeInsets.symmetric(horizontal: 8.0),
           physics: const ClampingScrollPhysics(),
           child: Form(
             key: _formKey,
@@ -46,7 +46,13 @@ class _SignUpPageState extends State<SignUpPage> {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                const Text("Inserisci i tuoi dati:"),
+                const Text(
+                  "Inserisci i tuoi dati:",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
                 const SizedBox(
                   height: 20,
                 ),
@@ -160,7 +166,10 @@ class _SignUpPageState extends State<SignUpPage> {
                               actions: [
                                 TextButton(
                                   onPressed: () {
-                                    Navigator.pop(context);
+                                    Navigator.popUntil(
+                                      context,
+                                      ModalRoute.withName("/login"),
+                                    );
                                   },
                                   child: const Text("Torna alla Login Page"),
                                 ),
