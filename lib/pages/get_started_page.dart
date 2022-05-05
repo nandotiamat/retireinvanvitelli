@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:retireinvanvitelli/pages/login_page.dart';
 
 class GetStartedPage extends StatelessWidget {
   const GetStartedPage({Key? key}) : super(key: key);

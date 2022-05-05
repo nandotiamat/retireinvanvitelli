@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "593083416525-f8aeq27jt14q5sk8srskkmnh1drdd80g.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.retireinvanvitelli",
+            "certificate_hash": "260140edfe5adfa94e6850b333e413a3cef8c11e"
+          }
+        },
+        {
           "client_id": "593083416525-hg0h0nonsh2b1q42el07djq53g9ichfe.apps.googleusercontent.com",
           "client_type": 3
         }

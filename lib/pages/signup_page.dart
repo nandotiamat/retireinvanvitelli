@@ -1,6 +1,6 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'login_page.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({Key? key}) : super(key: key);
@@ -10,6 +10,7 @@ class SignUpPage extends StatefulWidget {
 }
 
 class _SignUpPageState extends State<SignUpPage> {
+  final _auth = FirebaseAuth.instance;
   String _email = "";
   String _password = "";
   String _username = "";
@@ -18,13 +19,49 @@ class _SignUpPageState extends State<SignUpPage> {
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
-  void _handleRegistration(
+  Future<UserCredential?> _handleRegistration(
     String email,
     String password,
     String username,
     String? name,
     String? surname,
-  ) {}
+  ) async {
+    try {
+      UserCredential userCredential = await _auth
+          .createUserWithEmailAndPassword(email: email, password: password);
+      return userCredential;
+    } on FirebaseAuthException catch (e) {
+      String errorCode ; 
+      if (e.code == "invalid-email") {
+        errorCode = "Formato email errato";
+      } else if (e.code == "email-already-in-use") {
+        errorCode = "Email già in uso";
+      } else if (e.code == "operation-not-allowed") {
+        errorCode = "Operazione non permessa dal server";
+      } else if (e.code == "weak-password") {
+        errorCode = "Password debole, inserire una password di almeno 6";
+      }
+      else {
+        errorCode = "Errore generico";
+      }
+      showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: Text(errorCode),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: const Text("Chiudi"),
+                ),
+              ],
+            );
+          });
+    }
+    return null;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -97,6 +134,7 @@ class _SignUpPageState extends State<SignUpPage> {
                 ),
                 const SizedBox(height: 10),
                 TextFormField(
+                  obscureText: true,
                   onSaved: (value) {
                     _password = value!;
                   },
@@ -146,36 +184,39 @@ class _SignUpPageState extends State<SignUpPage> {
                 const SizedBox(height: 10),
                 ElevatedButton(
                   child: const Text('Registrati'),
-                  onPressed: () {
+                  onPressed: () async {
                     if (_formKey.currentState!.validate()) {
                       _formKey.currentState!.save();
-                      _handleRegistration(
+                      UserCredential? userCredential =
+                          await _handleRegistration(
                         _email,
                         _password,
                         _username,
                         _name,
                         _surname,
                       );
-                      showDialog(
-                          barrierDismissible: false,
-                          context: context,
-                          builder: (context) {
-                            return AlertDialog(
-                              title: const Text(
-                                  "Controlla la tua inbox per verificare la registrazione."),
-                              actions: [
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.popUntil(
-                                      context,
-                                      ModalRoute.withName("/login"),
-                                    );
-                                  },
-                                  child: const Text("Torna alla Login Page"),
-                                ),
-                              ],
-                            );
-                          });
+                      if (userCredential != null) {
+                        showDialog(
+                            barrierDismissible: false,
+                            context: context,
+                            builder: (context) {
+                              return AlertDialog(
+                                title: const Text(
+                                    "Controlla la tua inbox per verificare la registrazione."),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.popUntil(
+                                        context,
+                                        ModalRoute.withName("/login"),
+                                      );
+                                    },
+                                    child: const Text("Torna alla Login Page"),
+                                  ),
+                                ],
+                              );
+                            });
+                      } else {}
                     }
                   },
                 ),

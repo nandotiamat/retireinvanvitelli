@@ -4,7 +4,9 @@ import 'package:retireinvanvitelli/pages/home_page.dart';
 import 'package:retireinvanvitelli/pages/password_recovery_page.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:retireinvanvitelli/pages/signup_page.dart';
-// import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_signin_button/flutter_signin_button.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({
@@ -16,26 +18,81 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  // final _auth = FirebaseAuth.instance;
+  final _auth = FirebaseAuth.instance;
   String _email = "";
   String _password = "";
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
-  void _firebaseLogin(String email, String password) {}
+  Future<UserCredential?> _firebaseLogin(String email, String password) async {
+    try {
+      UserCredential userCredential = await _auth.signInWithEmailAndPassword(
+          email: email, password: password);
+      return userCredential;
+    } on FirebaseAuthException catch (e) {
+      String errorCode;
+      if (e.code == "invalid-email") {
+        errorCode = "Email non valida";
+      } else if (e.code == "user-disabled") {
+        errorCode = "Utente disabilitato";
+      } else if (e.code == "user-not-found") {
+        errorCode = "Nessun utente associato a questa email";
+      } else if (e.code == "wrong-password") {
+        errorCode = "Password errata";
+      } else {
+        errorCode = "Errore generico";
+      }
+      showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: Text(errorCode),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: const Text("Chiudi"),
+                ),
+              ],
+            );
+          });
 
-  void _handleLogin() {
+      return null;
+    }
+  }
+
+  void _handleLogin() async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
+      UserCredential? userCredential = await _firebaseLogin(_email, _password);
+      if (userCredential != null) {
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => const HomePage()),
+          (route) => false,
+        );
+      }
+    }
+  }
 
-      // TODO: FIREBASE LOGIN
+  void _handleGoogleSignIn() async {
+    final GoogleSignIn googleSignIn = GoogleSignIn();
 
-      _firebaseLogin(_email, _password);
+    try {
+      final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
+      if (googleUser != null) {
+        GoogleSignInAuthentication? googleAuth =
+            await googleUser.authentication;
+        final AuthCredential credential = GoogleAuthProvider.credential(
+            accessToken: googleAuth.accessToken, idToken: googleAuth.idToken);
 
-      Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(builder: (context) => const HomePage()),
-        (route) => false,
-      );
+        print(credential);
+
+        User? firebaseUser =
+            (await _auth.signInWithCredential(credential)).user;
+      }
+    } on Exception catch (e) {
+      print(e);
     }
   }
 
@@ -169,6 +226,18 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                       child: const Text('Login'),
                       onPressed: _handleLogin,
+                    ),
+                    const SizedBox(
+                      height: 8,
+                    ),
+                    SignInButton(
+                      Buttons.Google,
+                      onPressed: _handleGoogleSignIn,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      elevation: 1.0,
+                      padding: const EdgeInsets.symmetric(vertical: 4.0),
                     ),
                   ],
                 ),
