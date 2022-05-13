@@ -3,6 +3,7 @@ import 'package:retireinvanvitelli/pages/chats_page.dart';
 import 'package:retireinvanvitelli/pages/profile_page.dart';
 import 'package:retireinvanvitelli/pages/settings_page.dart';
 import 'package:retireinvanvitelli/types/chat_data.dart';
+import '../globals.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -12,6 +13,15 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  void getSharedPreferences() async {
+    // final prefs = await SharedPreferences.getInstance();
+    
+    String? uid = prefs!.getString("uid");
+    print(uid);
+    //int? token = prefs.getInt("token");
+    //print(token);
+  }
+
   int _currentIndex = 1;
   List<ChatData> chatData = [
     ChatData(
@@ -32,49 +42,43 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Retire in Vanvitelli',
-      theme: ThemeData(
-        primarySwatch: Colors.cyan,
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("Retire in Vanvitelli"),
+        actions: <Widget>[
+          IconButton(
+              onPressed: getSharedPreferences, icon: const Icon(Icons.search)),
+        ],
       ),
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text("Retire in Vanvitelli"),
-          actions: <Widget>[
-            IconButton(onPressed: () {}, icon: const Icon(Icons.search)),
-          ],
-        ),
-        body: IndexedStack(
-          index: _currentIndex,
-          children: <Widget>[
-            const ProfilePage(),
-            ChatsPage(
-              chatData: chatData,
+      body: IndexedStack(
+        index: _currentIndex,
+        children: <Widget>[
+          const ProfilePage(),
+          ChatsPage(
+            chatData: chatData,
+          ),
+          const SettingsPage(),
+        ],
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _currentIndex,
+        onTap: _onItemTapped,
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(
+              Icons.person,
             ),
-            const SettingsPage(),
-          ],
-        ),
-        bottomNavigationBar: BottomNavigationBar(
-          currentIndex: _currentIndex,
-          onTap: _onItemTapped,
-          items: const <BottomNavigationBarItem>[
-            BottomNavigationBarItem(
-              icon: Icon(
-                Icons.person,
-              ),
-              label: 'Profilo',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.message),
-              label: 'Messaggi',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.settings),
-              label: 'Impostazioni',
-            ),
-          ],
-        ),
+            label: 'Profilo',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.message),
+            label: 'Messaggi',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.settings),
+            label: 'Impostazioni',
+          ),
+        ],
       ),
     );
   }

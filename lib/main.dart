@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'globals.dart';
 import 'package:retireinvanvitelli/pages/error_page.dart';
 import 'package:retireinvanvitelli/pages/get_started_page.dart';
 import 'package:retireinvanvitelli/pages/home_page.dart';
 import 'package:retireinvanvitelli/pages/login_page.dart';
 import 'package:retireinvanvitelli/pages/signup_page.dart';
 import 'package:firebase_core/firebase_core.dart';
-void main() {
+import 'package:shared_preferences/shared_preferences.dart';
+
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  prefs = await SharedPreferences.getInstance();
   runApp(const RetireInVanvitelli());
 }
 

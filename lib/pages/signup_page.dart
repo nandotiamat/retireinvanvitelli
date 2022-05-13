@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({Key? key}) : super(key: key);
@@ -11,6 +12,8 @@ class SignUpPage extends StatefulWidget {
 
 class _SignUpPageState extends State<SignUpPage> {
   final _auth = FirebaseAuth.instance;
+  final _db = FirebaseFirestore.instance;
+
   String _email = "";
   String _password = "";
   String _username = "";
@@ -19,7 +22,7 @@ class _SignUpPageState extends State<SignUpPage> {
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
-  Future<UserCredential?> _handleRegistration(
+  Future<User?> _handleRegistration(
     String email,
     String password,
     String username,
@@ -29,7 +32,19 @@ class _SignUpPageState extends State<SignUpPage> {
     try {
       UserCredential userCredential = await _auth
           .createUserWithEmailAndPassword(email: email, password: password);
-      return userCredential;
+      User? user = userCredential.user;
+
+      CollectionReference userRef = _db.collection("user");
+
+      final userData = <String, dynamic> {
+        "uid": user?.uid,
+        "displayName": username,
+        "photoURL": user?.photoURL,
+        "email": user?.email
+      };
+
+      userRef.doc(userCredential.user?.uid).set(userData);
+      return user;
     } on FirebaseAuthException catch (e) {
       String errorCode ; 
       if (e.code == "invalid-email") {
@@ -187,7 +202,7 @@ class _SignUpPageState extends State<SignUpPage> {
                   onPressed: () async {
                     if (_formKey.currentState!.validate()) {
                       _formKey.currentState!.save();
-                      UserCredential? userCredential =
+                      User? user =
                           await _handleRegistration(
                         _email,
                         _password,
@@ -195,7 +210,7 @@ class _SignUpPageState extends State<SignUpPage> {
                         _name,
                         _surname,
                       );
-                      if (userCredential != null) {
+                      if (user != null) {
                         showDialog(
                             barrierDismissible: false,
                             context: context,

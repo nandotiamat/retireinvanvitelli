@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({Key? key}) : super(key: key);
@@ -8,6 +10,15 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
+  final _auth = FirebaseAuth.instance;
+  
+  void _handleLogOut() async {
+    await _auth.signOut();
+    final prefs = await SharedPreferences.getInstance();
+    prefs.remove("uid");
+    Navigator.pushNamedAndRemoveUntil(context, "/login", ModalRoute.withName("/getstarted"));
+  }
+
   final String dummyAvatar =
       "https://therminic2018.eu/wp-content/uploads/2018/07/dummy-avatar-300x300.jpg";
   @override
@@ -48,6 +59,8 @@ class _ProfilePageState extends State<ProfilePage> {
                   ..text = "Via Dummy 3, Dummyland",
                 decoration: const InputDecoration(label: Text("Address")),
               ),
+              const SizedBox(height: 50),
+              ElevatedButton(onPressed: _handleLogOut, child: const Text("LOGOUT")),
             ],
           ),
         ),

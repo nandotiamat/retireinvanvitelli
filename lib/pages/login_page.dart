@@ -7,6 +7,7 @@ import 'package:retireinvanvitelli/pages/signup_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({
@@ -23,10 +24,17 @@ class _LoginPageState extends State<LoginPage> {
   String _password = "";
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
+
+
   Future<UserCredential?> _firebaseLogin(String email, String password) async {
     try {
       UserCredential userCredential = await _auth.signInWithEmailAndPassword(
-          email: email, password: password);
+          email: email, password: password);    
+      final prefs = await SharedPreferences.getInstance();
+      if (userCredential.user != null ) {
+        await prefs.setString("uid", userCredential.user!.uid);
+        // await prefs.setInt("token", userCredential.credential!.token!);
+      }
       return userCredential;
     } on FirebaseAuthException catch (e) {
       String errorCode;
@@ -85,11 +93,9 @@ class _LoginPageState extends State<LoginPage> {
             await googleUser.authentication;
         final AuthCredential credential = GoogleAuthProvider.credential(
             accessToken: googleAuth.accessToken, idToken: googleAuth.idToken);
-
-        print(credential);
-
         User? firebaseUser =
             (await _auth.signInWithCredential(credential)).user;
+        
       }
     } on Exception catch (e) {
       print(e);
@@ -246,14 +252,17 @@ class _LoginPageState extends State<LoginPage> {
                 alignment: Alignment.centerLeft,
                 child: Padding(
                   padding: const EdgeInsets.symmetric(vertical: 16.0),
-                  child: RichText(
-                    text: TextSpan(
-                        text: "Password dimenticata?",
-                        style: TextStyle(
-                            color: Theme.of(context).primaryColor,
-                            fontWeight: FontWeight.w600),
-                        recognizer: TapGestureRecognizer()
-                          ..onTap = _handleForgetPassword),
+                  child: Directionality(
+                    textDirection: TextDirection.ltr,
+                    child: RichText(
+                      text: TextSpan(
+                          text: "Password dimenticata?",
+                          style: TextStyle(
+                              color: Theme.of(context).primaryColor,
+                              fontWeight: FontWeight.w600),
+                          recognizer: TapGestureRecognizer()
+                            ..onTap = _handleForgetPassword),
+                    ),
                   ),
                 ),
               ),
@@ -261,20 +270,23 @@ class _LoginPageState extends State<LoginPage> {
                 alignment: Alignment.centerLeft,
                 child: Padding(
                   padding: const EdgeInsets.only(bottom: 8.0),
-                  child: RichText(
-                    text: TextSpan(
-                        style: Theme.of(context).primaryTextTheme.bodyText2,
-                        text: 'Non sei ancora registrato? ',
-                        children: [
-                          TextSpan(
-                              text: "Registrati",
-                              style: TextStyle(
-                                color: Theme.of(context).primaryColor,
-                                fontWeight: FontWeight.w600,
-                              ),
-                              recognizer: TapGestureRecognizer()
-                                ..onTap = _handleRegistration),
-                        ]),
+                  child: Directionality(
+                    textDirection: TextDirection.ltr,
+                    child: RichText(
+                      text: TextSpan(
+                          style: Theme.of(context).primaryTextTheme.bodyText2,
+                          text: 'Non sei ancora registrato? ',
+                          children: [
+                            TextSpan(
+                                text: "Registrati",
+                                style: TextStyle(
+                                  color: Theme.of(context).primaryColor,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                                recognizer: TapGestureRecognizer()
+                                  ..onTap = _handleRegistration),
+                          ]),
+                    ),
                   ),
                 ),
               ),
