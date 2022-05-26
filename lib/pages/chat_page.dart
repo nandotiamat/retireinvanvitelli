@@ -1,13 +1,18 @@
 import 'dart:convert';
 import 'dart:math';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:open_file/open_file.dart';
-import 'package:retireinvanvitelli/types/chat_data.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:flutter_chat_ui/flutter_chat_ui.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:bubble/bubble.dart';
+import 'package:retireinvanvitelli/model/group_model.dart';
+import 'package:retireinvanvitelli/model/user_model.dart';
+
+import '../globals.dart';
 
 String randomString() {
   final random = Random.secure();
@@ -16,18 +21,33 @@ String randomString() {
 }
 
 class ChatPage extends StatefulWidget {
-  final ChatData chatData;
+  // final types.Room groupData;
+  final GroupModel groupData;
 
-  const ChatPage({Key? key, required this.chatData}) : super(key: key);
+  const ChatPage({Key? key, required this.groupData}) : super(key: key);
 
   @override
   State<ChatPage> createState() => _ChatPageState();
 }
 
 class _ChatPageState extends State<ChatPage> {
+  late String _uid;
+  late final types.User _user;
+  // late types.User userTalkingTo;
+  UserModel? userTalkingTo;
+  String? userTalkingToImageUrl;
+  @override
+  void initState() {
+    super.initState();
+    _uid = (prefs?.getString("uid"))!;
+    _user = types.User(id: _uid);
+    userTalkingTo = null;
+  }
+
   // temp
-  final List<types.Message> _messages = [];
-  final _user = const types.User(id: '06c33e8b-e835-4736-80f4-63f44b66666c');
+  final _db = FirebaseFirestore.instance;
+  final _storage = FirebaseStorage.instance;
+  late List<types.Message> _messages = [];
 
   Widget _bubbleBuilder(
     Widget child, {
@@ -51,10 +71,46 @@ class _ChatPageState extends State<ChatPage> {
     );
   }
 
-  void _addMessage(types.Message message) {
+  Future<List<types.Message>> _fetchMessages(String guid) async {
+    if (widget.groupData.members.length == 2) {
+      var uidToSearch =
+          widget.groupData.members.firstWhere((element) => element != _uid);
+      var userQuerySnapshot = await _db
+          .collection("user")
+          .where("uid", isEqualTo: uidToSearch)
+          .get();
+      userTalkingTo = UserModel.fromJson(userQuerySnapshot.docs.single.data());
+      try {
+        userTalkingToImageUrl =
+            await _storage.ref(userTalkingTo!.imageUrl).getDownloadURL();
+      } catch (e) {
+        print("non riesco a scaricare nessun immagine");
+      }
+    }
+    List<types.Message> messages = [];
+    var messageDocs = await _db
+        .collection("message")
+        .doc(widget.groupData.gid)
+        .collection("messages")
+        .orderBy("createdAt", descending: true)
+        .get();
+    for (var message in messageDocs.docs) {
+      var data = message.data();
+      messages.add(types.Message.fromJson(data));
+    }
+    return messages;
+  }
+
+  void _addMessage(types.Message message) async {
     setState(() {
+      // _messages.add(message);
       _messages.insert(0, message);
     });
+    await _db
+        .collection("message")
+        .doc(widget.groupData.gid)
+        .collection("messages")
+        .add(message.toJson());
   }
 
   void _handleMessageTap(BuildContext context, types.Message message) async {
@@ -174,42 +230,53 @@ class _ChatPageState extends State<ChatPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-            onPressed: () => Navigator.pop(context),
-            icon: const Icon(Icons.arrow_back_ios)),
-        title: ListTile(
-          leading: Hero(
-            tag: 'profilepic',
-            child: CircleAvatar(
-              backgroundImage: NetworkImage(widget.chatData.avatarUrl),
+    return FutureBuilder(
+      future: _fetchMessages(widget.groupData.gid),
+      builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          return Text(snapshot.error.toString());
+        }
+        if (snapshot.hasData) {
+          _messages = snapshot.data as List<types.Message>;
+
+          return Scaffold(
+            appBar: AppBar(
+              leading: IconButton(
+                  onPressed: () => Navigator.pop(context),
+                  icon: const Icon(Icons.arrow_back_ios)),
+              title: ListTile(
+                leading: Hero(
+                  tag: 'profilepic',
+                  child: CircleAvatar(
+                    backgroundImage: userTalkingTo!.imageUrl.isEmpty
+                        ? null
+                        : NetworkImage(widget.groupData.imageUrl),
+                  ),
+                ),
+                title: Text(userTalkingTo!.displayName),
+              ),
+              actions: [
+                IconButton(onPressed: () {}, icon: const Icon(Icons.more_vert)),
+              ],
             ),
-          ),
-          title: Text(widget.chatData.chatTitle),
-        ),
-        actions: [
-          IconButton(onPressed: () {}, icon: const Icon(Icons.more_vert)),
-        ],
-      ),
-      body: SafeArea(
-        bottom: false,
-        child: Chat(
-          theme: DefaultChatTheme(
-              backgroundColor: Theme.of(context).primaryColorLight,
-              inputBackgroundColor: Theme.of(context).primaryColorDark,
-              primaryColor: Colors.blueAccent),
-          messages: _messages,
-          onAttachmentPressed: _handleAtachmentPressed,
-          onMessageTap: _handleMessageTap,
-          onPreviewDataFetched: _handlePreviewDataFetched,
-          onSendPressed: _handleSendPressed,
-          user: _user,
-          bubbleBuilder: _bubbleBuilder,
-          showUserAvatars: true,
-          showUserNames: true,
-        ),
-      ),
+            body: SafeArea(
+              bottom: false,
+              child: Chat(
+                messages: _messages,
+                onAttachmentPressed: _handleAtachmentPressed,
+                onMessageTap: _handleMessageTap,
+                onPreviewDataFetched: _handlePreviewDataFetched,
+                onSendPressed: _handleSendPressed,
+                user: _user,
+                bubbleBuilder: _bubbleBuilder,
+                showUserAvatars: false,
+                showUserNames: false,
+              ),
+            ),
+          );
+        }
+        return Container(color: Colors.white, child: const Center(child: CircularProgressIndicator()));
+      },
     );
   }
 }

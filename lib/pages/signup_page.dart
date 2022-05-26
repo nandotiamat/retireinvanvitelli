@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:retireinvanvitelli/model/user_model.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({Key? key}) : super(key: key);
@@ -33,17 +34,15 @@ class _SignUpPageState extends State<SignUpPage> {
       UserCredential userCredential = await _auth
           .createUserWithEmailAndPassword(email: email, password: password);
       User? user = userCredential.user;
-
       CollectionReference userRef = _db.collection("user");
-
-      final userData = <String, dynamic> {
-        "uid": user?.uid,
-        "displayName": username,
-        "photoURL": user?.photoURL,
-        "email": user?.email
-      };
-
-      userRef.doc(userCredential.user?.uid).set(userData);
+      UserModel newUser = UserModel(
+        displayName: username,
+        groups: [],
+        email: email,
+        imageUrl: "",
+        uid: (user?.uid)!,
+      );      
+      userRef.doc(newUser.uid).set(newUser.toJson());
       return user;
     } on FirebaseAuthException catch (e) {
       String errorCode ; 

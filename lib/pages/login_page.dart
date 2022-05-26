@@ -95,6 +95,7 @@ class _LoginPageState extends State<LoginPage> {
             accessToken: googleAuth.accessToken, idToken: googleAuth.idToken);
         User? firebaseUser =
             (await _auth.signInWithCredential(credential)).user;
+        // TODO : SOCIAL LOGIN REGISTRATION TO DATABASE
         
       }
     } on Exception catch (e) {

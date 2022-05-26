@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:retireinvanvitelli/delegate/my_search_delegate.dart';
 import 'package:retireinvanvitelli/pages/chats_page.dart';
 import 'package:retireinvanvitelli/pages/profile_page.dart';
 import 'package:retireinvanvitelli/pages/settings_page.dart';
-import 'package:retireinvanvitelli/types/chat_data.dart';
-import '../globals.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -13,26 +12,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  void getSharedPreferences() async {
-    // final prefs = await SharedPreferences.getInstance();
-    
-    String? uid = prefs!.getString("uid");
-    print(uid);
-    //int? token = prefs.getInt("token");
-    //print(token);
-  }
-
   int _currentIndex = 1;
-  List<ChatData> chatData = [
-    ChatData(
-      lastMessageTime: "13:23",
-      numberOfUnreadMessages: 134,
-      avatarUrl:
-          "https://therminic2018.eu/wp-content/uploads/2018/07/dummy-avatar-300x300.jpg",
-      chatTitle: "Dummy",
-      lastMessage: "Lorem Ipsum",
-    )
-  ];
 
   void _onItemTapped(int index) {
     setState(() {
@@ -47,17 +27,18 @@ class _HomePageState extends State<HomePage> {
         title: const Text("Retire in Vanvitelli"),
         actions: <Widget>[
           IconButton(
-              onPressed: getSharedPreferences, icon: const Icon(Icons.search)),
+              onPressed: () {
+                showSearch(context: context, delegate: MySearchDelegate());
+              },
+              icon: const Icon(Icons.search)),
         ],
       ),
       body: IndexedStack(
         index: _currentIndex,
-        children: <Widget>[
-          const ProfilePage(),
-          ChatsPage(
-            chatData: chatData,
-          ),
-          const SettingsPage(),
+        children: const [
+          ProfilePage(),
+          ChatsPage(),
+          SettingsPage(),
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
