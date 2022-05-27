@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:retireinvanvitelli/globals.dart';
 
 class PasswordRecoveryPage extends StatefulWidget {
   const PasswordRecoveryPage({Key? key}) : super(key: key);
@@ -55,31 +56,50 @@ class _PasswordRecoveryPageState extends State<PasswordRecoveryPage> {
                 const SizedBox(height: 10),
                 ElevatedButton(
                   child: const Text('Recupera Password'),
-                  onPressed: () {
+                  onPressed: () async {
                     if (_formKey.currentState!.validate()) {
                       _formKey.currentState!.save();
-
-                      // TODO: Handle Password Recovery with Firebase Auth
-
-                      _handlePasswordRecovery(_email);
-                      showDialog(
-                          barrierDismissible: false,
-                          context: context,
-                          builder: (context) {
-                            return AlertDialog(
-                              title: const Text(
-                                  "Controlla la tua inbox per rigenerare la password."),
-                              actions: [
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.popUntil(
-                                        context, ModalRoute.withName("/login"));
-                                  },
-                                  child: const Text("Torna alla Login Page"),
-                                ),
-                              ],
-                            );
-                          });
+                      var checkEmailQuerySnapshot = await db
+                          .collection("user")
+                          .where("email", isEqualTo: _email)
+                          .get();
+                      if (checkEmailQuerySnapshot.size == 1) {
+                        await _handlePasswordRecovery(_email);
+                        showDialog(
+                            barrierDismissible: false,
+                            context: context,
+                            builder: (context) {
+                              return AlertDialog(
+                                title: const Text(
+                                    "Controlla la tua inbox per rigenerare la password."),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.popUntil(context,
+                                          ModalRoute.withName("/login"));
+                                    },
+                                    child: const Text("Torna alla Login Page"),
+                                  ),
+                                ],
+                              );
+                            });
+                      } else {
+                        showDialog(
+                            barrierDismissible: false,
+                            context: context,
+                            builder: (context) {
+                              return AlertDialog(
+                                title: const Text(
+                                    "Non trovo nessun utente associato a questa email"),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () => Navigator.pop(context),
+                                    child: const Text("Chiudi"),
+                                  ),
+                                ],
+                              );
+                            });
+                      }
                     }
                   },
                 ),
@@ -92,5 +112,11 @@ class _PasswordRecoveryPageState extends State<PasswordRecoveryPage> {
     );
   }
 
-  void _handlePasswordRecovery(String email) {}
+  Future<void> _handlePasswordRecovery(String email) async {
+    try {
+      await auth.sendPasswordResetEmail(email: email);
+    } catch (e) {
+      print(e);
+    }
+  }
 }
