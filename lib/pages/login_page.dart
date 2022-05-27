@@ -1,6 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:retireinvanvitelli/globals.dart';
+import 'package:retireinvanvitelli/model/user_model.dart';
 import 'package:retireinvanvitelli/pages/home_page.dart';
 import 'package:retireinvanvitelli/pages/password_recovery_page.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
@@ -88,10 +89,26 @@ class _LoginPageState extends State<LoginPage> {
         final AuthCredential credential = GoogleAuthProvider.credential(
             accessToken: googleAuth.accessToken, idToken: googleAuth.idToken);
         User? firebaseUser = (await auth.signInWithCredential(credential)).user;
-        print(firebaseUser?.uid);
-
-        // TODO : SOCIAL LOGIN REGISTRATION TO DATABASE
-
+        if (firebaseUser != null) {
+          UserModel user = UserModel(
+              displayName: firebaseUser.displayName != null
+                  ? firebaseUser.displayName!
+                  : "empty",
+              email: firebaseUser.email!,
+              groups: [],
+              imageUrl: "",
+              // imageUrl:
+                  // firebaseUser.photoURL != null ? firebaseUser.photoURL! : "",
+              uid: firebaseUser.uid,
+              );
+          await db.collection("user").doc(user.uid).set(user.toJson());
+          await prefs.setString("uid", user.uid);
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (context) => const HomePage()),
+            (route) => false,
+          );
+        }
       }
     } on Exception catch (e) {
       print(e);

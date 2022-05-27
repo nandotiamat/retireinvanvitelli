@@ -2,9 +2,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:retireinvanvitelli/globals.dart';
 import 'package:retireinvanvitelli/model/user_model.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 
@@ -16,15 +16,14 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  final _auth = FirebaseAuth.instance;
-  final _db = FirebaseFirestore.instance;
-  final _storage = FirebaseStorage.instance;
-
   String? userProfileImageUrl;
 
   void _handleLogOut() async {
-    await _auth.signOut();
-    final prefs = await SharedPreferences.getInstance();
+    await auth.signOut();
+    final GoogleSignIn googleSignIn = GoogleSignIn();
+    if (await googleSignIn.isSignedIn()) {
+      await googleSignIn.disconnect();
+    }
     prefs.remove("uid");
     Navigator.pushNamedAndRemoveUntil(
         context, "/login", ModalRoute.withName("/getstarted"));
@@ -32,10 +31,10 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Future<UserModel> _fetchUserData(String uid) async {
     var querySnapshot =
-        await _db.collection("user").where("uid", isEqualTo: uid).get();
+        await db.collection("user").where("uid", isEqualTo: uid).get();
     UserModel user = UserModel.fromJson(querySnapshot.docs.single.data());
     try {
-      userProfileImageUrl = await _storage.ref(user.imageUrl).getDownloadURL();
+      userProfileImageUrl = await storage.ref(user.imageUrl).getDownloadURL();
     } catch (e) {
       print(e);
     }
@@ -48,7 +47,7 @@ class _ProfilePageState extends State<ProfilePage> {
       imageQuality: 70,
       maxWidth: 1440,
     );
-    var fileRef = _storage.ref(getUid()! + "/images/profile_image.jpg");
+    var fileRef = storage.ref(getUid()! + "/images/profile_image.jpg");
     File file = File(result!.path);
     try {
       await fileRef.putFile(file);
@@ -59,7 +58,7 @@ class _ProfilePageState extends State<ProfilePage> {
     } on FirebaseException catch (e) {
       print(e);
     }
-    var userRef = _db.collection("user").doc(getUid()!);
+    var userRef = db.collection("user").doc(getUid()!);
     var tempUserDoc = await userRef.get();
     UserModel tempUser = UserModel.fromJson(tempUserDoc.data()!);
     tempUser.imageUrl = fileRef.fullPath;

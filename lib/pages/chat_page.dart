@@ -1,7 +1,5 @@
 import 'dart:convert';
 import 'dart:math';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:open_file/open_file.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
@@ -11,7 +9,6 @@ import 'package:file_picker/file_picker.dart';
 import 'package:bubble/bubble.dart';
 import 'package:retireinvanvitelli/model/group_model.dart';
 import 'package:retireinvanvitelli/model/user_model.dart';
-
 import '../globals.dart';
 
 String randomString() {
