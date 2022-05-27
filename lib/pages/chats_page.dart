@@ -23,7 +23,7 @@ class _ChatsPageState extends State<ChatsPage> {
   @override
   void initState() {
     super.initState();
-    _uid = (prefs?.getString("uid"))!;
+    _uid = getUid()!;
   }
 
   Future<List<GroupModel?>> fetchGroupByUID(String uid) async {
@@ -80,7 +80,8 @@ class _ChatsPageState extends State<ChatsPage> {
                           child: ListView.builder(
                             shrinkWrap: true,
                             itemCount: groups.length,
-                            itemBuilder: (BuildContext context, int index) => ListTile(
+                            itemBuilder: (BuildContext context, int index) =>
+                                ListTile(
                               contentPadding: const EdgeInsets.all(8.0),
                               onTap: () async {
                                 Navigator.push(
@@ -96,7 +97,9 @@ class _ChatsPageState extends State<ChatsPage> {
                                 tag: 'profilepic',
                                 child: CircleAvatar(
                                   radius: 30,
-                                  backgroundImage: groups[index]!.imageUrl.isEmpty
+                                  backgroundImage: groups[index]!
+                                          .imageUrl
+                                          .isEmpty
                                       ? const NetworkImage(
                                           "https://therminic2018.eu/wp-content/uploads/2018/07/dummy-avatar-300x300.jpg")
                                       : NetworkImage(groups[index]!.imageUrl),

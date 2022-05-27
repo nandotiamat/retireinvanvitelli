@@ -1,7 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-
 import '../globals.dart';
 import '../model/group_model.dart';
 import '../model/user_model.dart';
@@ -10,8 +8,8 @@ import '../pages/chat_page.dart';
 class MySearchDelegate extends SearchDelegate {
   dynamic resultsKey = const Key("results");
   dynamic suggestionsKey = const Key("suggestions");
-  final String _uid = (prefs?.getString("uid"))!;
-  final FirebaseStorage _storage = FirebaseStorage.instance;
+
+  final String _uid = getUid()!;
 
   Future<GroupModel> createNewGroup(
       List<String>? membersUid, String type) async {
@@ -30,7 +28,7 @@ class MySearchDelegate extends SearchDelegate {
     GroupModel group = GroupModel(
       createdAt: DateTime.now().toIso8601String(),
       modifiedAt: DateTime.now().toIso8601String(),
-      createdBy: (prefs?.getString("uid"))!,
+      createdBy: getUid()!,
       gid: "tempgid",
       name: "",
       imageUrl: "",
@@ -93,13 +91,13 @@ class MySearchDelegate extends SearchDelegate {
     var searchUserQueryResult = await _db
         .collection("user")
         .where("email", isEqualTo: query)
-        .where("uid", isNotEqualTo: (prefs?.getString("uid"))!)
+        .where("uid", isNotEqualTo: getUid()!)
         .get();
     for (var userSnapshot in searchUserQueryResult.docs) {
       var userData = userSnapshot.data();
       UserModel user = UserModel.fromJson(userData);
       if (user.imageUrl.isNotEmpty) {
-        user.imageUrl = await _storage
+        user.imageUrl = await storage
             .ref("${user.uid}/images/profile_image.jpg")
             .getDownloadURL();
       }

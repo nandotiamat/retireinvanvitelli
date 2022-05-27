@@ -39,14 +39,11 @@ class _ChatPageState extends State<ChatPage> {
   @override
   void initState() {
     super.initState();
-    _uid = (prefs?.getString("uid"))!;
+    _uid = getUid()!;
     _user = types.User(id: _uid);
     userTalkingTo = null;
   }
 
-  // temp
-  final _db = FirebaseFirestore.instance;
-  final _storage = FirebaseStorage.instance;
   late List<types.Message> _messages = [];
 
   Widget _bubbleBuilder(
@@ -75,20 +72,20 @@ class _ChatPageState extends State<ChatPage> {
     if (widget.groupData.members.length == 2) {
       var uidToSearch =
           widget.groupData.members.firstWhere((element) => element != _uid);
-      var userQuerySnapshot = await _db
+      var userQuerySnapshot = await db
           .collection("user")
           .where("uid", isEqualTo: uidToSearch)
           .get();
       userTalkingTo = UserModel.fromJson(userQuerySnapshot.docs.single.data());
       try {
         userTalkingToImageUrl =
-            await _storage.ref(userTalkingTo!.imageUrl).getDownloadURL();
+            await storage.ref(userTalkingTo!.imageUrl).getDownloadURL();
       } catch (e) {
         print("non riesco a scaricare nessun immagine");
       }
     }
     List<types.Message> messages = [];
-    var messageDocs = await _db
+    var messageDocs = await db
         .collection("message")
         .doc(widget.groupData.gid)
         .collection("messages")
@@ -106,7 +103,7 @@ class _ChatPageState extends State<ChatPage> {
       // _messages.add(message);
       _messages.insert(0, message);
     });
-    await _db
+    await db
         .collection("message")
         .doc(widget.groupData.gid)
         .collection("messages")
@@ -248,9 +245,9 @@ class _ChatPageState extends State<ChatPage> {
                 leading: Hero(
                   tag: 'profilepic',
                   child: CircleAvatar(
-                    backgroundImage: userTalkingTo!.imageUrl.isEmpty
+                    backgroundImage: userTalkingToImageUrl == null
                         ? null
-                        : NetworkImage(widget.groupData.imageUrl),
+                        : NetworkImage(userTalkingToImageUrl!),
                   ),
                 ),
                 title: Text(userTalkingTo!.displayName),
@@ -275,7 +272,9 @@ class _ChatPageState extends State<ChatPage> {
             ),
           );
         }
-        return Container(color: Colors.white, child: const Center(child: CircularProgressIndicator()));
+        return Container(
+            color: Colors.white,
+            child: const Center(child: CircularProgressIndicator()));
       },
     );
   }

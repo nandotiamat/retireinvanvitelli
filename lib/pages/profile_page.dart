@@ -19,7 +19,7 @@ class _ProfilePageState extends State<ProfilePage> {
   final _auth = FirebaseAuth.instance;
   final _db = FirebaseFirestore.instance;
   final _storage = FirebaseStorage.instance;
-  
+
   String? userProfileImageUrl;
 
   void _handleLogOut() async {
@@ -48,19 +48,18 @@ class _ProfilePageState extends State<ProfilePage> {
       imageQuality: 70,
       maxWidth: 1440,
     );
-    var fileRef =
-        _storage.ref((prefs?.getString("uid"))! + "/images/profile_image.jpg");
+    var fileRef = _storage.ref(getUid()! + "/images/profile_image.jpg");
     File file = File(result!.path);
     try {
       await fileRef.putFile(file);
-        var tempUserProfileImageUrl = await fileRef.getDownloadURL();
+      var tempUserProfileImageUrl = await fileRef.getDownloadURL();
       setState(() {
         userProfileImageUrl = tempUserProfileImageUrl;
       });
     } on FirebaseException catch (e) {
       print(e);
     }
-    var userRef = _db.collection("user").doc((prefs?.getString("uid"))!);
+    var userRef = _db.collection("user").doc(getUid()!);
     var tempUserDoc = await userRef.get();
     UserModel tempUser = UserModel.fromJson(tempUserDoc.data()!);
     tempUser.imageUrl = fileRef.fullPath;
@@ -72,10 +71,13 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-        future: _fetchUserData((prefs?.getString("uid"))!),
+        future: _fetchUserData(getUid()!),
         builder: (context, snapshot) {
           if (snapshot.hasError) {
-            return ElevatedButton(onPressed: _handleLogOut, child: const Text("Logout"),);
+            return ElevatedButton(
+              onPressed: _handleLogOut,
+              child: const Text("Logout"),
+            );
           }
 
           if (snapshot.hasData) {
@@ -94,7 +96,8 @@ class _ProfilePageState extends State<ProfilePage> {
                           onTap: _handleChangeImage,
                           child: CircleAvatar(
                             radius: 60,
-                            backgroundImage: user.imageUrl.isEmpty || userProfileImageUrl == null
+                            backgroundImage: user.imageUrl.isEmpty ||
+                                    userProfileImageUrl == null
                                 ? NetworkImage(dummyAvatar)
                                 : NetworkImage(userProfileImageUrl!),
                           ),

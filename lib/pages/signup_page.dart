@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:retireinvanvitelli/globals.dart';
 import 'package:retireinvanvitelli/model/user_model.dart';
 
 class SignUpPage extends StatefulWidget {
@@ -12,9 +13,6 @@ class SignUpPage extends StatefulWidget {
 }
 
 class _SignUpPageState extends State<SignUpPage> {
-  final _auth = FirebaseAuth.instance;
-  final _db = FirebaseFirestore.instance;
-
   String _email = "";
   String _password = "";
   String _username = "";
@@ -31,21 +29,21 @@ class _SignUpPageState extends State<SignUpPage> {
     String? surname,
   ) async {
     try {
-      UserCredential userCredential = await _auth
-          .createUserWithEmailAndPassword(email: email, password: password);
+      UserCredential userCredential = await auth.createUserWithEmailAndPassword(
+          email: email, password: password);
       User? user = userCredential.user;
-      CollectionReference userRef = _db.collection("user");
+      CollectionReference userRef = db.collection("user");
       UserModel newUser = UserModel(
         displayName: username,
         groups: [],
         email: email,
         imageUrl: "",
         uid: (user?.uid)!,
-      );      
+      );
       userRef.doc(newUser.uid).set(newUser.toJson());
       return user;
     } on FirebaseAuthException catch (e) {
-      String errorCode ; 
+      String errorCode;
       if (e.code == "invalid-email") {
         errorCode = "Formato email errato";
       } else if (e.code == "email-already-in-use") {
@@ -54,8 +52,7 @@ class _SignUpPageState extends State<SignUpPage> {
         errorCode = "Operazione non permessa dal server";
       } else if (e.code == "weak-password") {
         errorCode = "Password debole, inserire una password di almeno 6";
-      }
-      else {
+      } else {
         errorCode = "Errore generico";
       }
       showDialog(
@@ -201,8 +198,7 @@ class _SignUpPageState extends State<SignUpPage> {
                   onPressed: () async {
                     if (_formKey.currentState!.validate()) {
                       _formKey.currentState!.save();
-                      User? user =
-                          await _handleRegistration(
+                      User? user = await _handleRegistration(
                         _email,
                         _password,
                         _username,

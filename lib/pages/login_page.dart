@@ -1,5 +1,6 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:retireinvanvitelli/globals.dart';
 import 'package:retireinvanvitelli/pages/home_page.dart';
 import 'package:retireinvanvitelli/pages/password_recovery_page.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
@@ -7,7 +8,6 @@ import 'package:retireinvanvitelli/pages/signup_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({
@@ -19,21 +19,16 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  final _auth = FirebaseAuth.instance;
   String _email = "";
   String _password = "";
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
-
-
   Future<UserCredential?> _firebaseLogin(String email, String password) async {
     try {
-      UserCredential userCredential = await _auth.signInWithEmailAndPassword(
-          email: email, password: password);    
-      final prefs = await SharedPreferences.getInstance();
-      if (userCredential.user != null ) {
+      UserCredential userCredential = await auth.signInWithEmailAndPassword(
+          email: email, password: password);
+      if (userCredential.user != null) {
         await prefs.setString("uid", userCredential.user!.uid);
-        // await prefs.setInt("token", userCredential.credential!.token!);
       }
       return userCredential;
     } on FirebaseAuthException catch (e) {
@@ -64,7 +59,6 @@ class _LoginPageState extends State<LoginPage> {
               ],
             );
           });
-
       return null;
     }
   }
@@ -93,10 +87,11 @@ class _LoginPageState extends State<LoginPage> {
             await googleUser.authentication;
         final AuthCredential credential = GoogleAuthProvider.credential(
             accessToken: googleAuth.accessToken, idToken: googleAuth.idToken);
-        User? firebaseUser =
-            (await _auth.signInWithCredential(credential)).user;
+        User? firebaseUser = (await auth.signInWithCredential(credential)).user;
+        print(firebaseUser?.uid);
+
         // TODO : SOCIAL LOGIN REGISTRATION TO DATABASE
-        
+
       }
     } on Exception catch (e) {
       print(e);
