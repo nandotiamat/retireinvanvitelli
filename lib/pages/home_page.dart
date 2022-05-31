@@ -38,7 +38,7 @@ class _HomePageState extends State<HomePage> {
         children: const [
           ProfilePage(),
           ChatsPage(),
-          SettingsPage(),
+          // SettingsPage(),
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
@@ -55,10 +55,10 @@ class _HomePageState extends State<HomePage> {
             icon: Icon(Icons.message),
             label: 'Messaggi',
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.settings),
-            label: 'Impostazioni',
-          ),
+          // BottomNavigationBarItem(
+          //   icon: Icon(Icons.settings),
+          //   label: 'Impostazioni',
+          // ),
         ],
       ),
     );

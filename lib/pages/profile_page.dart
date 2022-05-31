@@ -26,7 +26,10 @@ class _ProfilePageState extends State<ProfilePage> {
     }
     prefs.remove("uid");
     Navigator.pushNamedAndRemoveUntil(
-        context, "/login", ModalRoute.withName("/getstarted"));
+        // context, "/login", ModalRoute.withName("/getstarted"));
+        context,
+        "/login",
+        (route) => false);
   }
 
   Future<UserModel> _fetchUserData(String uid) async {
