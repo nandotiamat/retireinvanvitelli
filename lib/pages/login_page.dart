@@ -91,23 +91,19 @@ class _LoginPageState extends State<LoginPage> {
         User? firebaseUser = (await auth.signInWithCredential(credential)).user;
         if (firebaseUser != null) {
           UserModel user = UserModel(
-              displayName: firebaseUser.displayName != null
-                  ? firebaseUser.displayName!
-                  : "empty",
-              email: firebaseUser.email!,
-              groups: [],
-              imageUrl: "",
-              // imageUrl:
-                  // firebaseUser.photoURL != null ? firebaseUser.photoURL! : "",
-              uid: firebaseUser.uid,
-              );
+            displayName: firebaseUser.displayName != null
+                ? firebaseUser.displayName!
+                : "empty",
+            email: firebaseUser.email!,
+            groups: [],
+            imageUrl: "",
+            // imageUrl:
+            // firebaseUser.photoURL != null ? firebaseUser.photoURL! : "",
+            uid: firebaseUser.uid,
+          );
           await db.collection("user").doc(user.uid).set(user.toJson());
           await prefs.setString("uid", user.uid);
-          Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(builder: (context) => const HomePage()),
-            (route) => false,
-          );
+          Navigator.pushNamedAndRemoveUntil(context, "/home", (route) => false);
         }
       }
     } on Exception catch (e) {

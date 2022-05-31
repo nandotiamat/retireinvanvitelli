@@ -44,7 +44,7 @@ class _RetireInVanvitelliState extends State<RetireInVanvitelli> {
                 '/login': (context) => const LoginPage(),
                 '/signup': (context) => const SignUpPage(),
                 '/getstarted': (context) => const GetStartedPage(),
-                '/': (context) => const HomePage(),
+                '/home': (context) => const HomePage(),
               },
               theme: ThemeData(
                 primarySwatch: Colors.cyan,
